@@ -57,7 +57,7 @@ if(!sec||!cv)return;
 const gl=cv.getContext("webgl",{alpha:true,premultipliedAlpha:false});
 if(!gl){cv.remove();return}
 const vs="attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}";
-const fs="precision highp float;uniform vec2 r;uniform float t;void main(){vec2 p=(gl_FragCoord.xy*2.-r)/min(r.x,r.y);float d=length(p)*.05;float rx=p.x*(1.+d),gx=p.x,bx=p.x*(1.-d);float cr=.05/abs(p.y+sin(rx+t)*.5);float cg=.05/abs(p.y+sin(gx+t)*.5);float cb=.05/abs(p.y+sin(bx+t)*.5);float a=clamp(max(cr,max(cg,cb)),0.,1.);gl_FragColor=vec4(cr,cg,cb,a);}";
+const fs="precision highp float;uniform vec2 r;uniform float t;void main(){vec2 p=(gl_FragCoord.xy*2.-r)/min(r.x,r.y);float d=max(p.x,0.)*.09;float rx=p.x*(1.+d),gx=p.x,bx=p.x*(1.-d);float cr=.05/abs(p.y+sin(rx+t)*.5);float cg=.05/abs(p.y+sin(gx+t)*.5);float cb=.05/abs(p.y+sin(bx+t)*.5);float a=clamp(max(cr,max(cg,cb)),0.,1.);gl_FragColor=vec4(cr,cg,cb,a);}";
 const sh=(ty,src)=>{const s=gl.createShader(ty);gl.shaderSource(s,src);gl.compileShader(s);return s};
 const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
 gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());
@@ -69,7 +69,7 @@ const resize=()=>{const d=Math.min(devicePixelRatio||1,2);cv.width=sec.clientWid
 resize();addEventListener("resize",resize);
 const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
 let t=0,vis=true,raf=0;
-const frame=()=>{gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.uniform1f(ut,t);gl.drawArrays(gl.TRIANGLES,0,6);if(!still&&vis){t+=.01;raf=requestAnimationFrame(frame)}};
+const frame=()=>{gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.uniform1f(ut,t);gl.drawArrays(gl.TRIANGLES,0,6);if(!still&&vis){t+=.007;raf=requestAnimationFrame(frame)}};
 new IntersectionObserver(e=>{const v=e[0].isIntersecting;if(v&&!vis&&!still){vis=true;frame()}else if(!v){vis=false;cancelAnimationFrame(raf)}}).observe(sec);
 frame();
 })();
